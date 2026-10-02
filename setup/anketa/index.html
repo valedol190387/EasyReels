@@ -161,9 +161,9 @@ const SECTIONS = [
    {k:"author.name", type:"text", label:"Имя — как подписывать", ph:"Анна"},
    {k:"author.instagram", type:"nick", label:"Ник в Instagram", ph:"anna.makes"},
    {type:"links", label:"Ссылки", items:[["youtube","YouTube-канал","https://youtube.com/@..."],["telegram","Telegram-канал","https://t.me/..."],["tiktok","TikTok","https://tiktok.com/@..."],["vk","VK / Дзен","https://..."],["site","Сайт или продукт","https://..."]]},
-   {k:"author.niche", type:"area", label:"Про что ролики — одной строкой", ph:"Вайбкодинг: приложения, боты и ИИ-агенты без команды разработчиков"},
-   {k:"author.business", type:"area", label:"Чем занимаешься, что продаёшь (если есть)", ph:"Делаю закрытые клубы по подписке для инфобизнеса"},
-   {k:"author.audience", type:"text", label:"Для кого ролики", ph:"Заказчики и такие же технари"},
+   {k:"author.niche", type:"area", label:"Про что ролики — одной строкой", ph:"Например: английский для взрослых без зубрёжки"},
+   {k:"author.business", type:"area", label:"Чем занимаешься, что продаёшь (если есть)", ph:"Например: онлайн-курс и разговорный клуб"},
+   {k:"author.audience", type:"text", label:"Для кого ролики", ph:"Например: взрослые, которые бросали английский"},
    {k:"author.lead_to", type:"multi", label:"Куда ведём зрителя", sub:"Можно несколько — первым будет главный.", opts:[D("follow","Подписка на аккаунт","",1),D("telegram","Telegram"),D("youtube","YouTube"),D("site","Сайт / продукт")], def:["follow"]},
  ]},
  {id:"cut", t:"Резка", h:"Как ИИ режет сырое видео. Всё выбрано по умолчанию — так режу свои ролики.", q:[
@@ -398,6 +398,10 @@ document.getElementById("save").addEventListener("click",async()=>{
     if(old && old.author){ const merge=(a,b)=>{ for(const k in b){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])) a[k]=merge(a[k]||{},b[k]); else a[k]=b[k]; } return a; }; merge(S.profile,old); status("Подставил прошлые ответы — поменяй, что нужно."); }
   }catch(e){}
   build(); render();
+  /* для скриншотов в README: ?view=outro|lt — вкладка превью; ?only=<раздел> — показать один раздел */
+  const qs=new URLSearchParams(location.search), v=qs.get("view"), only=qs.get("only");
+  if(v){ const b=document.querySelector(`#tabs button[data-v="${v}"]`); if(b) b.click(); }
+  if(only){ document.querySelector("header.top").hidden=true; document.querySelectorAll("section.card").forEach(c=>c.hidden=c.id!==only); }
 })();
 </script>
 </body>

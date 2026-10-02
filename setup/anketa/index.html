@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Настройка монтажа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Montserrat:wght@700;900&family=Inter:wght@500;700&family=Playfair+Display:wght@700;900&family=Russo+One&display=swap">
+<style>
+:root{
+  --ink:#0B0B0C; --surface:#151517; --raise:#1C1C1F; --line:#2A2A2E; --cream:#F5EDE0; --muted:#A39C90;
+  --fire:#FF4D2E; --flame:#FFB627; --signal:#35D0FF;
+  --r:14px; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--ink);color:var(--cream);font:16px/1.5 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--flame)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;padding-block:28px 120px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}.side{position:static!important;order:-1}}
+header.top{grid-column:1/-1;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font:700 12px/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--fire)}
+h1{font:900 clamp(30px,5vw,48px)/1.05 Unbounded,sans-serif;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.lead{color:var(--muted);max-width:62ch;margin:0}
+nav.steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+nav.steps a{font:700 12px/1 "JetBrains Mono",monospace;color:var(--muted);text-decoration:none;padding:8px 10px;border:1px solid var(--line);border-radius:999px}
+nav.steps a b{color:var(--fire);margin-right:6px}
+nav.steps a.ok{color:var(--cream);border-color:#3a3a40}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;margin-bottom:18px;scroll-margin-top:16px}
+section.card>h2{display:flex;align-items:baseline;gap:12px;margin:0 0 4px;font:800 22px/1.2 Unbounded,sans-serif;letter-spacing:-.01em}
+section.card>h2 span{font:700 13px/1 "JetBrains Mono",monospace;color:var(--fire)}
+section.card>p.hint{margin:0 0 18px;color:var(--muted);font-size:14px}
+.q{display:flex;flex-direction:column;gap:8px;padding-block:14px;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0;padding-top:4px}
+.q>label,.q>.label{font-weight:700;font-size:15px}
+.q .sub{color:var(--muted);font-size:13px;margin-top:-4px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{font-size:13px;color:var(--muted);font-weight:600}
+input[type=text],input[type=url],textarea{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--cream);font:500 15px/1.4 Manrope,sans-serif;padding:11px 12px;outline:none;transition:border-color .15s}
+input:focus,textarea:focus{border-color:var(--fire)}
+textarea{min-height:64px;resize:vertical}
+.pre{position:relative}.pre>i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-style:normal;font-weight:700}.pre>input{padding-left:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--ink);cursor:pointer;transition:.15s;min-width:120px}
+.chip span b{font-weight:700;font-size:14px}
+.chip span small{color:var(--muted);font-size:12px;line-height:1.3}
+.chip span em{font:700 10px/1 "JetBrains Mono",monospace;font-style:normal;color:var(--flame);letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.chip input:checked+span{border-color:var(--fire);background:rgba(255,77,46,.10);box-shadow:inset 0 0 0 1px var(--fire)}
+.chip input:focus-visible+span{outline:2px solid var(--flame);outline-offset:2px}
+.warn{display:none;font-size:13px;color:var(--flame);background:rgba(255,182,39,.08);border:1px solid rgba(255,182,39,.3);border-radius:10px;padding:10px 12px}
+.warn.on{display:block}
+.tags{display:flex;flex-wrap:wrap;gap:6px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px}
+.tags span{background:var(--raise);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;display:flex;gap:6px;align-items:center}
+.tags span button{all:unset;cursor:pointer;color:var(--muted)}
+.tags input{all:unset;flex:1;min-width:140px;font-size:14px;padding:4px}
+.palettes{display:flex;flex-wrap:wrap;gap:10px}
+.pal{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--ink);width:132px}
+.pal.on{border-color:var(--fire);box-shadow:inset 0 0 0 1px var(--fire)}
+.pal .sw{display:flex;height:26px;border-radius:6px;overflow:hidden}
+.pal .sw i{flex:1}
+.pal b{font-size:13px}
+.colors{display:flex;flex-wrap:wrap;gap:10px}
+.color{display:flex;align-items:center;gap:8px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px 10px 6px 6px;font-size:13px}
+.color input{width:30px;height:30px;border:0;padding:0;background:none;cursor:pointer}
+.drop{display:flex;align-items:center;gap:14px;border:1px dashed #3a3a40;border-radius:12px;padding:14px;background:var(--ink);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--fire)}
+.drop input{display:none}
+.drop .thumb{width:56px;height:56px;border-radius:12px;background:var(--raise) center/cover no-repeat;flex:none;display:grid;place-items:center;color:var(--muted);font-size:22px}
+.drop .thumb.round{border-radius:50%}
+.drop .txt b{display:block;font-size:14px}.drop .txt small{color:var(--muted);font-size:12px}
+.files{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.files span{font-size:12px;background:var(--raise);border-radius:6px;padding:3px 8px;color:var(--muted)}
+/* превью */
+.side{position:sticky;top:20px;align-self:start;display:flex;flex-direction:column;gap:12px}
+.tabs{display:flex;gap:6px}
+.tabs button{all:unset;cursor:pointer;flex:1;text-align:center;font:700 12px/1 "JetBrains Mono",monospace;padding:9px 0;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.tabs button.on{color:var(--ink);background:var(--cream);border-color:var(--cream)}
+.phone{position:relative;width:100%;max-width:320px;aspect-ratio:9/16;margin-inline:auto;border-radius:30px;overflow:hidden;border:6px solid #000;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px var(--line);container-type:inline-size;background:#d9cdb6}
+.scene{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 34%,rgba(255,255,255,.35),transparent 70%),linear-gradient(#e9dfcb,#cbbd9f)}
+.person{position:absolute;left:0;right:0;bottom:0;height:66%}
+.person .head{position:absolute;left:50%;top:4%;width:34%;aspect-ratio:1/1.22;transform:translateX(-50%);border-radius:48% 48% 44% 44%;background:#c99a7b;box-shadow:inset 0 -14px 0 rgba(0,0,0,.08)}
+.person .hair{position:absolute;left:50%;top:2%;width:36%;height:9%;transform:translateX(-50%);border-radius:50% 50% 30% 30%;background:#2b211b}
+.person .body{position:absolute;left:4%;right:4%;bottom:0;height:56%;border-radius:46% 46% 0 0;background:#4b3a2f}
+.wm{position:absolute;left:10%;top:17%;font:700 3.6cqw/1 Manrope,sans-serif;color:rgba(255,255,255,.85);text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.subs{position:absolute;left:10%;right:10%;bottom:19.8%;text-align:center;font-size:5.75cqw;line-height:1.16;letter-spacing:-.03em;text-shadow:0 .4cqw 2.2cqw rgba(0,0,0,.85),0 .1cqw .3cqw rgba(0,0,0,.9)}
+.subs span{display:inline-block;transition:color .08s,transform .1s,opacity .1s}
+.lt{position:absolute;left:5%;bottom:30%;display:flex;flex-direction:column;gap:1cqw}
+.lt b{font-size:6cqw;line-height:1;padding:2cqw 3cqw;border-radius:2cqw}
+.lt small{font-size:3.6cqw;padding:1.4cqw 3cqw;border-radius:1.6cqw;align-self:flex-start}
+.outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4cqw;padding:10%}
+.outro .ava{width:28cqw;height:28cqw;border-radius:50%;background:center/cover no-repeat;display:grid;place-items:center;font-size:12cqw;font-weight:900}
+.outro .nm{font-size:8cqw;line-height:1.05;text-align:center;letter-spacing:-.02em}
+.outro .hd{font-size:4.2cqw;opacity:.8}
+.outro .btns{display:flex;flex-direction:column;gap:2.4cqw;width:80%}
+.outro .btns i{font-style:normal;text-align:center;font-size:4.4cqw;font-weight:800;padding:3cqw;border-radius:3cqw}
+.outro .tg{display:flex;align-items:center;gap:2.4cqw;font-size:3.8cqw;padding:2.4cqw 3cqw;border-radius:3cqw;width:80%}
+.prevnote{font-size:12px;color:var(--muted);text-align:center}
+/* низ */
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(11,11,12,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:14px 20px calc(14px + env(safe-area-inset-bottom,0px))}
+.bar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.bar .st{flex:1;font-size:13px;color:var(--muted)}
+.btn{all:unset;cursor:pointer;background:var(--fire);color:var(--ink);font:800 15px/1 Manrope,sans-serif;padding:15px 26px;border-radius:12px;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.5;cursor:wait}
+.done{position:fixed;inset:0;background:rgba(11,11,12,.96);display:none;place-items:center;padding:20px;z-index:10}
+.done.on{display:grid}
+.done .box{max-width:520px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.done h2{font:900 34px/1.1 Unbounded,sans-serif;margin:0}
+.done code{font:700 18px/1 "JetBrains Mono",monospace;background:var(--surface);border:1px solid var(--line);padding:12px 16px;border-radius:10px;color:var(--flame)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Настройка · 5 минут · один раз</div>
+    <h1>Расскажи о себе — дальше монтаж сам</h1>
+    <p class="lead">Отвечать необязательно. Не знаешь — оставь как есть: везде уже выбран вариант по умолчанию, проверенный на роликах. Справа сразу видно, как это будет выглядеть.</p>
+    <nav class="steps" id="steps"></nav>
+  </header>
+  <main id="form"></main>
+  <aside class="side">
+    <div class="tabs" id="tabs">
+      <button data-v="subs" class="on">Субтитры</button><button data-v="lt">Плашка</button><button data-v="outro">Финал</button>
+    </div>
+    <div class="phone" id="phone">
+      <div class="scene"></div>
+      <div class="person"><div class="body"></div><div class="head"></div><div class="hair"></div></div>
+      <div class="wm" id="pWm"></div>
+      <div class="subs" id="pSubs"></div>
+      <div class="lt" id="pLt" hidden><b></b><small></small></div>
+      <div class="outro" id="pOutro" hidden><div class="ava" id="pAva"></div><div class="nm" id="pNm"></div><div class="hd" id="pHd"></div><div class="btns" id="pBtns"></div><div class="tg" id="pTg"></div></div>
+    </div>
+    <div class="prevnote">Примерный вид. Реальный ролик — твоё видео с этой графикой.</div>
+  </aside>
+</div>
+<div class="bar"><div class="in"><div class="st" id="status">Всё, что не трогал, — по умолчанию.</div><button class="btn" id="save">Сохранить</button></div></div>
+<div class="done" id="done"><div class="box"><div class="eyebrow">Сохранено</div><h2>Готово</h2><p class="lead">Ответы лежат в проекте в <b>profile.json</b>. Окно можно закрыть. Вернись в чат с ИИ и напиши:</p><code>готово</code><p class="lead" style="font-size:13px">Передумаешь — запусти анкету ещё раз: ответы подставятся.</p></div></div>
+
+<script>
+/* ---------- вопросы ---------- */
+const PALETTES = {
+  kitchen:{name:"Кухня технаря",bg:"#0B0B0C",surface:"#151517",text:"#F5EDE0",accent:"#FF4D2E",accent2:"#FFB627"},
+  clean:{name:"Светлый",bg:"#F7F5F0",surface:"#FFFFFF",text:"#16161A",accent:"#2F5BFF",accent2:"#00B37E"},
+  neon:{name:"Неон",bg:"#07070C",surface:"#12121C",text:"#EDEBFF",accent:"#B6FF3B",accent2:"#FF3BD4"},
+  warm:{name:"Тёплый",bg:"#1E1410",surface:"#2A1D17",text:"#FFF2E2",accent:"#FF8A3D",accent2:"#FFD166"},
+  business:{name:"Деловой",bg:"#0E1726",surface:"#16233A",text:"#F2F5FA",accent:"#3D8BFF",accent2:"#E9C46A"}
+};
+const FONTS = {
+  kitchen:{name:"Unbounded + Manrope",display:"Unbounded",text:"Manrope",hint:"широкий, дерзкий"},
+  modern:{name:"Montserrat + Inter",display:"Montserrat",text:"Inter",hint:"современный, читаемый"},
+  editorial:{name:"Playfair + Manrope",display:"Playfair Display",text:"Manrope",hint:"журнальный"},
+  tech:{name:"Russo One + JetBrains",display:"Russo One",text:"JetBrains Mono",hint:"«под код»"}
+};
+const D = (v, b, s) => ({v, b, s});   // вариант: значение, подпись, пояснение
+const SECTIONS = [
+ {id:"me", t:"Кто ты", h:"Ник и ссылки подставляются в финал, плашки и подписи. Нет соцсети — оставь пустым, ИИ её не упомянет.", q:[
+   {k:"author.name", type:"text", label:"Имя — как подписывать", ph:"Анна"},
+   {k:"author.instagram", type:"nick", label:"Ник в Instagram", ph:"anna.makes"},
+   {type:"links", label:"Ссылки", items:[["youtube","YouTube-канал","https://youtube.com/@..."],["telegram","Telegram-канал","https://t.me/..."],["tiktok","TikTok","https://tiktok.com/@..."],["vk","VK / Дзен","https://..."],["site","Сайт или продукт","https://..."]]},
+   {k:"author.niche", type:"area", label:"Про что ролики — одной строкой", ph:"Вайбкодинг: приложения, боты и ИИ-агенты без команды разработчиков"},
+   {k:"author.business", type:"area", label:"Чем занимаешься, что продаёшь (если есть)", ph:"Делаю закрытые клубы по подписке для инфобизнеса"},
+   {k:"author.audience", type:"text", label:"Для кого ролики", ph:"Заказчики и такие же технари"},
+   {k:"author.lead_to", type:"multi", label:"Куда ведём зрителя", sub:"Можно несколько — первым будет главный.", opts:[D("follow","Подписка на аккаунт","",1),D("telegram","Telegram"),D("youtube","YouTube"),D("site","Сайт / продукт")], def:["follow"]},
+ ]},
+ {id:"cut", t:"Резка", h:"Как ИИ режет сырое видео. Всё выбрано по умолчанию — так режу свои ролики.", q:[
+   {k:"cut.speed", type:"one", label:"Ускорять речь?", opts:[D(1,"Нет","как записал"),D(1.1,"Чуть-чуть","×1.1"),D(1.2,"Бодро","×1.2 — не «бурундук», но живо")], def:1.2},
+   {k:"cut.pauses", type:"one", label:"Паузы", opts:[D("tight","Резать плотно","всё длиннее 0,3 с"),D("breath","Оставлять воздух","короткие паузы перед важным")], def:"tight"},
+   {k:"cut.takes", type:"one", label:"Сказал фразу заново", opts:[D("last","Оставить последний дубль","обычно он лучший"),D("ask","Показать варианты","выберу сам")], def:"last"},
+   {k:"cut.fillers", type:"one", label:"«Эээ», «короче», «как бы»", opts:[D("cut","Вырезать"),D("some","Оставить чуть-чуть","для живости")], def:"cut"},
+   {k:"cut.profanity", type:"one", label:"Мат", opts:[D("keep","Оставлять"),D("beep","Запикивать"),D("cut","Вырезать")], def:"keep"},
+   {k:"cut.digressions", type:"one", label:"Шутки и отступления", opts:[D("keep_fun","Оставлять, если живо"),D("cut","Резать ради темпа")], def:"keep_fun"},
+   {k:"cut.lookaway", type:"one", label:"Смотрю мимо камеры", opts:[D("cover","Закрыть графикой","если слова важны, иначе вырезать"),D("keep","Оставлять как есть")], def:"cover"},
+   {k:"cut.length", type:"one", label:"Длина ролика", opts:[D("meaning","По смыслу","режем воду, а не мысли"),D(30,"До 30 с"),D(60,"30–60 с"),D(90,"До 90 с")], def:"meaning"},
+ ]},
+ {id:"subs", t:"Субтитры", h:"Справа — как они будут бежать за речью.", q:[
+   {k:"subs.style", type:"one", label:"Стиль", opts:[D("karaoke","Караоке","фраза целиком, слово подсвечивается"),D("chunks","По 2–4 слова","без подсветки"),D("word","Одно слово","крупно, по центру"),D("none","Без субтитров")], def:"karaoke"},
+   {k:"subs.caps", type:"one", label:"Регистр", opts:[D(false,"Обычный"),D(true,"ЗАГЛАВНЫЕ")], def:false},
+   {k:"subs.terms", type:"tags", label:"Слова, которые расшифровка путает", sub:"Бренды, термины, имена. Enter — добавить. ИИ будет писать их правильно.", ph:"Claude, Remotion, Supabase…"},
+ ]},
+ {id:"sound", t:"Звук и вставки", h:"Звуки и мемы ИИ скачает сам — готовый набор с подписями, что в каждом.", q:[
+   {k:"sound.music", type:"one", label:"Фоновая музыка", opts:[D("none","Без музыки"),D("in_app","Добавлю в приложении","при публикации, в ролик не вшивать"),D("baked","Вшивать из своей папки","library/music — кладёшь сам")], def:"none", warnOn:"baked", warn:"Чужой трек — на твой страх и риск: Instagram может выключить у ролика звук, YouTube — заглушить или снять. Безопаснее добавлять музыку в приложении при публикации."},
+   {k:"sound.sfx", type:"one", label:"Звуки на появление графики", opts:[D(true,"Да, тихо"),D(false,"Нет")], def:true},
+   {k:"sound.memes", type:"one", label:"Мемы-вставки на 1–3 с", opts:[D("none","Без мемов"),D("library","Из медиатеки","готовый набор + свои файлы"),D("search","Медиатека + поиск на YouTube","ИИ сам ищет подходящие")], def:"library"},
+   {k:"sound.screens", type:"one", label:"Скриншоты того, о чём говорю", opts:[D("auto","ИИ находит сам","сайты, приложения, новости"),D("mine","Только то, что дам")], def:"auto"},
+ ]},
+ {id:"style", t:"Стиль", h:"Цвета и шрифты графики. Есть своя дизайн-система — загрузи, ИИ подстроит набор под неё.", q:[
+   {type:"palette", label:"Палитра"},
+   {type:"colors", label:"Свои цвета", sub:"Поменяй любой — превью справа обновится."},
+   {k:"style.fonts", type:"fonts", label:"Шрифты"},
+   {type:"file", key:"avatar", label:"Аватар", sub:"Для финальной заставки. Квадратное фото или аватар из соцсетей.", accept:"image/*", round:true},
+   {type:"file", key:"logo", label:"Логотип (если есть)", sub:"PNG с прозрачным фоном лучше всего.", accept:"image/*"},
+   {type:"file", key:"design", label:"Своя дизайн-система (если есть)", sub:"Экспорт из Claude Design (zip или html), Figma-экспорт, брендбук. Набор графики возьмёт оттуда цвета, шрифты и манеру.", accept:".zip,.html,.htm,.pdf,.json,.css,image/*", multiple:true},
+   {type:"file", key:"refs", label:"Скриншоты-референсы (если есть)", sub:"3–10 кадров из чужих роликов, где нравится графика.", accept:"image/*", multiple:true},
+ ]},
+ {id:"cta", t:"Финал и призыв", h:"Что зритель видит в конце каждого ролика.", q:[
+   {k:"cta.outro", type:"one", label:"Финальная заставка", opts:[D(true,"Да","аватар, ник, подписка, ссылка"),D(false,"Нет")], def:true},
+   {k:"cta.codeword", type:"one", label:"Кодовое слово в комментариях", opts:[D("none","Не использую"),D("one","Одно на все ролики"),D("per_reel","Своё под каждый ролик","скажу при монтаже")], def:"none"},
+   {k:"cta.word", type:"text", label:"Кодовое слово", ph:"ГАЙД", showIf:["cta.codeword","one"]},
+   {k:"cta.offer", type:"text", label:"Что человек получит за кодовое слово", ph:"пришлю инструкцию в личку", showIf:["cta.codeword","one","per_reel"]},
+ ]},
+ {id:"posts", t:"Подписи к постам", h:"Тексты под роликом для Instagram, YouTube, Telegram. Без пересказа ролика.", q:[
+   {k:"posts.tone", type:"one", label:"Тон", opts:[D("bold","Дерзко, с юмором"),D("calm","Спокойно, по делу"),D("expert","Экспертно")], def:"bold"},
+   {k:"posts.hashtags", type:"text", label:"Хештеги, которые ставить всегда", ph:"#вайбкодинг #нейросети"},
+ ]},
+];
+
+/* ---------- состояние ---------- */
+const S = {profile:{version:1, author:{links:{}}, style:{palette:"kitchen", colors:{...PALETTES.kitchen}, fonts:"kitchen"}}, files:{}};
+delete S.profile.style.colors.name;
+const get = (p) => p.split(".").reduce((o,k)=>o==null?undefined:o[k], S.profile);
+const set = (p,v) => { const ks=p.split("."); let o=S.profile; ks.slice(0,-1).forEach(k=>{o[k]=o[k]&&typeof o[k]==="object"?o[k]:{}; o=o[k];}); o[ks.at(-1)]=v; render(); };
+const el = (tag, attrs={}, ...kids) => { const e=document.createElement(tag); for (const [k,v] of Object.entries(attrs)) { if (k==="class") e.className=v; else if (k.startsWith("on")) e.addEventListener(k.slice(2),v); else if (v!==undefined&&v!==null&&v!==false) e.setAttribute(k,v===true?"":v);} kids.flat().forEach(c=>c!=null&&e.append(c)); return e; };
+const esc = (s) => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* значения по умолчанию */
+SECTIONS.forEach(s=>s.q.forEach(q=>{ if (q.k && q.def!==undefined && get(q.k)===undefined) { const ks=q.k.split("."); let o=S.profile; ks.slice(0,-1).forEach(k=>{o[k]=o[k]||{}; o=o[k];}); o[ks.at(-1)]=q.def; }}));
+
+/* ---------- построение формы ---------- */
+function build(){
+  const form = document.getElementById("form"), steps = document.getElementById("steps");
+  form.innerHTML=""; steps.innerHTML="";
+  SECTIONS.forEach((s,i)=>{
+    const num=String(i+1).padStart(2,"0");
+    steps.append(el("a",{href:"#"+s.id},el("b",{},num),s.t));
+    const card=el("section",{class:"card",id:s.id},el("h2",{},el("span",{},num),s.t),el("p",{class:"hint"},s.h));
+    s.q.forEach(q=>card.append(question(q)));
+    form.append(card);
+  });
+}
+function question(q){
+  const box=el("div",{class:"q","data-k":q.k||""});
+  if (q.showIf) box.dataset.show=JSON.stringify(q.showIf);
+  const lbl=el("div",{class:"label"},q.label); box.append(lbl);
+  if (q.sub) box.append(el("div",{class:"sub"},q.sub));
+  if (q.type==="text"||q.type==="nick"){
+    const inp=el("input",{type:"text",placeholder:q.ph||"",value:get(q.k)||"",oninput:e=>set(q.k,q.type==="nick"?e.target.value.replace(/^@+/,"").trim():e.target.value)});
+    box.append(q.type==="nick"?el("div",{class:"pre"},el("i",{},"@"),inp):inp);
+  }
+  if (q.type==="area") box.append(el("textarea",{placeholder:q.ph||"",oninput:e=>set(q.k,e.target.value)},get(q.k)||""));
+  if (q.type==="links"){
+    const g=el("div",{class:"grid2"});
+    q.items.forEach(([key,name,ph])=>g.append(el("label",{class:"field"},el("span",{},name),el("input",{type:"url",placeholder:ph,value:(S.profile.author.links||{})[key]||"",oninput:e=>{S.profile.author.links[key]=e.target.value.trim(); render();}}))));
+    box.append(g);
+  }
+  if (q.type==="one"||q.type==="multi"){
+    const c=el("div",{class:"chips"}); const name=q.k;
+    q.opts.forEach(o=>{
+      const cur=get(q.k); const checked=q.type==="multi"?(cur||[]).includes(o.v):cur===o.v;
+      const inp=el("input",{type:q.type==="multi"?"checkbox":"radio",name,checked,onchange:e=>{
+        if (q.type==="multi"){ let a=[...(get(q.k)||[])]; a=e.target.checked?[...a,o.v]:a.filter(x=>x!==o.v); set(q.k,a); }
+        else set(q.k,o.v);
+      }});
+      const isDef=Array.isArray(q.def)?q.def.includes(o.v):q.def===o.v;
+      c.append(el("label",{class:"chip"},inp,el("span",{},el("b",{},o.b),o.s?el("small",{},o.s):null,isDef?el("em",{},"по умолчанию"):null)));
+    });
+    box.append(c);
+    if (q.warn){ const w=el("div",{class:"warn"+(get(q.k)===q.warnOn?" on":""),"data-warn":q.k,"data-on":JSON.stringify(q.warnOn)},q.warn); box.append(w); }
+  }
+  if (q.type==="tags"){
+    const wrap=el("div",{class:"tags"});
+    const draw=()=>{ wrap.querySelectorAll("span").forEach(x=>x.remove()); (get(q.k)||[]).forEach((t,i)=>wrap.insertBefore(el("span",{},t,el("button",{type:"button",title:"убрать",onclick:()=>{const a=[...get(q.k)]; a.splice(i,1); set(q.k,a); draw();}},"×")),inp)); };
+    const add=(v)=>{ v.split(",").map(x=>x.trim()).filter(Boolean).forEach(x=>{ const a=get(q.k)||[]; if(!a.includes(x)) set(q.k,[...a,x]); }); draw(); };
+    const inp=el("input",{placeholder:q.ph,onkeydown:e=>{ if(e.key==="Enter"||e.key===","){ e.preventDefault(); add(inp.value); inp.value=""; } else if(e.key==="Backspace"&&!inp.value){ const a=[...(get(q.k)||[])]; a.pop(); set(q.k,a); draw(); } },onblur:()=>{ if(inp.value){ add(inp.value); inp.value=""; } }});
+    wrap.append(inp); draw(); box.append(wrap);
+  }
+  if (q.type==="palette"){
+    const c=el("div",{class:"palettes"});
+    Object.entries(PALETTES).forEach(([key,p])=>{
+      c.append(el("button",{type:"button",class:"pal"+(S.profile.style.palette===key?" on":""),onclick:()=>{ const {name,...cols}=p; S.profile.style.palette=key; S.profile.style.colors={...cols}; build(); render(); }},
+        el("div",{class:"sw"},...["bg","surface","text","accent","accent2"].map(k=>el("i",{style:`background:${p[k]}`}))), el("b",{},p.name), key==="kitchen"?el("small",{style:"color:var(--flame);font-size:11px"},"по умолчанию"):null));
+    });
+    box.append(c);
+  }
+  if (q.type==="colors"){
+    const c=el("div",{class:"colors"});
+    [["bg","Фон"],["surface","Плашки"],["text","Текст"],["accent","Акцент"],["accent2","Второй акцент"]].forEach(([k,n])=>{
+      c.append(el("label",{class:"color"},el("input",{type:"color",value:S.profile.style.colors[k],oninput:e=>{S.profile.style.colors[k]=e.target.value; S.profile.style.palette="custom"; document.querySelectorAll(".pal").forEach(x=>x.classList.remove("on")); render();}}),n));
+    });
+    box.append(c);
+  }
+  if (q.type==="fonts"){
+    const c=el("div",{class:"chips"});
+    Object.entries(FONTS).forEach(([key,f])=>{
+      const inp=el("input",{type:"radio",name:"fonts",checked:S.profile.style.fonts===key,onchange:()=>{S.profile.style.fonts=key; render();}});
+      c.append(el("label",{class:"chip"},inp,el("span",{},el("b",{style:`font-family:'${f.display}';font-weight:800`},"Аа Бб"),el("small",{},f.name+" · "+f.hint),key==="kitchen"?el("em",{},"по умолчанию"):null)));
+    });
+    box.append(c);
+  }
+  if (q.type==="file"){
+    const inp=el("input",{type:"file",accept:q.accept,multiple:q.multiple||null});
+    const thumb=el("div",{class:"thumb"+(q.round?" round":"")},q.multiple?"⇪":"+");
+    const list=el("div",{class:"files"});
+    const drop=el("label",{class:"drop"},inp,thumb,el("div",{class:"txt"},el("b",{},q.multiple?"Перетащи файлы или нажми":"Перетащи файл или нажми"),el("small",{},q.multiple?"можно несколько":"один файл")));
+    const take=async(files)=>{
+      const arr=await Promise.all([...files].map(f=>new Promise((res,rej)=>{ if(f.size>60*1024*1024) return rej(new Error(f.name+" больше 60 МБ")); const r=new FileReader(); r.onload=()=>res({name:f.name,type:f.type,data:r.result}); r.onerror=rej; r.readAsDataURL(f); }))).catch(e=>{status(e.message,true); return null;});
+      if(!arr) return;
+      if(q.multiple){ S.files[q.key]=[...(S.files[q.key]||[]),...arr]; } else S.files[q.key]=arr[0];
+      list.innerHTML=""; (q.multiple?S.files[q.key]:[S.files[q.key]]).forEach(f=>list.append(el("span",{},f.name)));
+      const img=(q.multiple?S.files[q.key]:[S.files[q.key]]).find(f=>f.type.startsWith("image/"));
+      if(img){ thumb.style.backgroundImage=`url(${img.data})`; thumb.textContent=""; }
+      render();
+    };
+    inp.addEventListener("change",()=>take(inp.files));
+    drop.addEventListener("dragover",e=>{e.preventDefault(); drop.classList.add("over");});
+    drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+    drop.addEventListener("drop",e=>{e.preventDefault(); drop.classList.remove("over"); take(e.dataTransfer.files);});
+    const saved=S.profile.style[q.key];
+    if(typeof saved==="string" && /\.(png|jpe?g|webp)$/i.test(saved)){ thumb.style.backgroundImage=`url(/${saved})`; thumb.textContent=""; list.append(el("span",{},"уже загружен")); }
+    box.append(drop,list);
+  }
+  return box;
+}
+
+/* ---------- превью ---------- */
+let VIEW="subs";
+const SAMPLE=["Этот","ролик","я","не","монтировал.","Вообще.","Ни","секунды."];
+function render(){
+  const p=S.profile, c=p.style.colors, f=FONTS[p.style.fonts]||FONTS.kitchen;
+  /* показ условных вопросов и предупреждений */
+  document.querySelectorAll("[data-show]").forEach(b=>{ const [k,...vals]=JSON.parse(b.dataset.show); b.hidden=!vals.includes(get(k)); });
+  document.querySelectorAll("[data-warn]").forEach(w=>w.classList.toggle("on",get(w.dataset.warn)===JSON.parse(w.dataset.on)));
+  /* прогресс по разделам */
+  const filled={me:!!(p.author.name||p.author.instagram),cut:true,subs:true,sound:true,style:true,cta:true,posts:true};
+  document.querySelectorAll("nav.steps a").forEach(a=>a.classList.toggle("ok",!!filled[a.getAttribute("href").slice(1)]));
+  /* телефон */
+  const nick=p.author.instagram?"@"+p.author.instagram:"@твой_ник";
+  document.getElementById("pWm").textContent=nick;
+  const subs=document.getElementById("pSubs"), lt=document.getElementById("pLt"), out=document.getElementById("pOutro");
+  subs.hidden=VIEW!=="subs"||p.subs.style==="none"; lt.hidden=VIEW!=="lt"; out.hidden=VIEW!=="outro";
+  document.querySelector(".person").style.display=VIEW==="outro"?"none":"";
+  document.querySelector(".scene").style.background=VIEW==="outro"?`radial-gradient(70% 50% at 50% 40%,${c.surface},${c.bg})`:"";
+  subs.style.fontFamily=`'${f.display}',sans-serif`; subs.style.fontWeight=f.display==="Russo One"?400:800;
+  subs.style.textTransform=p.subs.caps?"uppercase":"none";
+  /* плашка */
+  lt.querySelector("b").textContent=p.author.name||"Твоё имя"; lt.querySelector("b").style.cssText=`background:${c.surface};color:${c.text};font-family:'${f.display}';font-weight:800`;
+  lt.querySelector("small").textContent=(p.author.niche||"чем занимаешься").slice(0,40); lt.querySelector("small").style.cssText=`background:${c.accent};color:${c.bg};font-family:'${f.text}';font-weight:700`;
+  /* финал */
+  out.style.fontFamily=`'${f.text}',sans-serif`; out.style.color=c.text;
+  const ava=document.getElementById("pAva"); const av=S.files.avatar?.data||(p.style.avatar?"/"+p.style.avatar:"");
+  ava.style.cssText=av?`background-image:url(${av});box-shadow:0 0 0 1.2cqw ${c.accent}`:`background:${c.accent};color:${c.bg}`; ava.textContent=av?"":(p.author.name||"Я").slice(0,1).toUpperCase();
+  const nm=document.getElementById("pNm"); nm.textContent=p.author.name||"Твоё имя"; nm.style.fontFamily=`'${f.display}'`; nm.style.fontWeight=f.display==="Russo One"?400:900;
+  document.getElementById("pHd").textContent=nick;
+  const btns=document.getElementById("pBtns"); btns.innerHTML="";
+  const lead=(p.author.lead_to||["follow"]);
+  const btn=(t,a)=>el("i",{style:`background:${a?c.accent:c.surface};color:${a?c.bg:c.text}`},t);
+  btns.append(btn("Подписаться",true),btn("Сохрани — пригодится"));
+  if(p.cta.codeword!=="none") btns.append(btn(`Напиши «${p.cta.word||"СЛОВО"}» в комментах`));
+  const tg=document.getElementById("pTg"); const tgl=p.author.links.telegram;
+  tg.hidden=!(tgl&&lead.includes("telegram")); tg.style.cssText+=`;background:${c.surface};color:${c.text}`; tg.innerHTML=`<b style="color:${c.accent2}">Telegram</b>&nbsp;${esc((tgl||"").replace(/^https?:\/\/(t\.me\/)?/,"@"))}`;
+  const off=VIEW==="outro"&&p.cta.outro===false;
+  [...out.children].forEach(x=>{ if(x.id!=="pTg") x.style.visibility=off?"hidden":""; });
+  if(off) tg.hidden=true;
+}
+/* бегущая подсветка субтитров */
+let tick=0;
+setInterval(()=>{
+  const p=S.profile, c=p.style.colors, subs=document.getElementById("pSubs"); if(subs.hidden) return;
+  const n=SAMPLE.length, i=tick%(n+4); tick++;
+  let words=SAMPLE, from=0;
+  if(p.subs.style==="word"){ words=[SAMPLE[Math.min(i,n-1)]]; from=Math.min(i,n-1); }
+  if(p.subs.style==="chunks"){ const g=i<5?0:5; words=SAMPLE.slice(g,g+(g?3:5)); from=g; }
+  if(p.subs.style==="karaoke"){ const g=i<5?0:5; words=SAMPLE.slice(g,g+(g?3:5)); from=g; }
+  subs.style.fontSize=p.subs.style==="word"?"9cqw":"5.75cqw";
+  subs.innerHTML=words.map((w,j)=>{ const k=from+j; const w2=j===words.length-1?w.replace(/[.,]$/,""):w;
+    if(p.subs.style!=="karaoke") return `<span style="color:${c.text==="#16161A"?"#fff":c.text}">${esc(w2)}</span>`;
+    const on=k===i, said=k<i; return `<span style="color:${on?c.accent:"#fff"};opacity:${on||said?1:.45};transform:translateY(${on?"-0.4cqw":"0"})">${esc(w2)}</span>`; }).join(" ");
+},380);
+
+document.getElementById("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; VIEW=b.dataset.v; document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+
+/* ---------- сохранение ---------- */
+function status(t,bad){ const s=document.getElementById("status"); s.textContent=t; s.style.color=bad?"var(--flame)":""; }
+document.getElementById("save").addEventListener("click",async()=>{
+  const b=document.getElementById("save"); const p=S.profile;
+  if(!p.author.instagram && !confirm("Ник в Instagram пустой — в финале и подписях его не будет. Сохранить так?")) return;
+  b.disabled=true; status("Сохраняю…");
+  const fonts=FONTS[p.style.fonts]||FONTS.kitchen;
+  const profile={...p, style:{...p.style, font_display:fonts.display, font_text:fonts.text, font_mono:"JetBrains Mono"}, saved_at:new Date().toISOString()};
+  try{
+    const r=await fetch("/save",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({profile,files:S.files})});
+    const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||"не сохранилось");
+    document.getElementById("done").classList.add("on");
+  }catch(e){
+    if(location.protocol==="file:"){ /* открыли файл без сервера — отдаём profile.json скачиванием */
+      const a=el("a",{href:URL.createObjectURL(new Blob([JSON.stringify(profile,null,2)],{type:"application/json"})),download:"profile.json"}); document.body.append(a); a.click();
+      status("Анкета открыта без сервера: скачался profile.json — положи его в корень проекта (файлы загрузи в brand/ вручную).",true);
+    } else status("Ошибка: "+e.message,true);
+  } finally { b.disabled=false; }
+});
+
+/* ---------- старт: подставить прошлые ответы ---------- */
+(async()=>{
+  try{ const r=await fetch("/profile.json"); const old=await r.json();
+    if(old && old.author){ const merge=(a,b)=>{ for(const k in b){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])) a[k]=merge(a[k]||{},b[k]); else a[k]=b[k]; } return a; }; merge(S.profile,old); status("Подставил прошлые ответы — поменяй, что нужно."); }
+  }catch(e){}
+  build(); render();
+})();
+</script>
+</body>
+</html>

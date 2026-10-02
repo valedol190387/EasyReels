@@ -1,0 +1,25 @@
+# Личное — у каждого своё
+profile.json
+brand/
+inbox/*
+!inbox/.gitkeep
+drafts/*
+!drafts/.gitkeep
+final/*
+!final/.gitkeep
+plans/*.json
+!plans/example.json
+public/source*.mp4
+public/library/
+src/data/*.json
+src/reels/r*/
+
+# Скачивается при установке
+models/
+node_modules/
+tools/.venv/
+__pycache__/
+work/
+out/
+.DS_Store
+tools/whisper.cpp/

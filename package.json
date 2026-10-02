@@ -1,0 +1,31 @@
+{
+  "name": "reels-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Монтаж вертикальных роликов с ИИ-агентом (Codex / Claude Code): резка по словам, субтитры, графика, финал",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.532",
+    "@remotion/google-fonts": "4.0.532",
+    "@remotion/media": "4.0.532",
+    "lucide-react": "^1.47.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.532",
+    "simple-icons": "^16.32.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

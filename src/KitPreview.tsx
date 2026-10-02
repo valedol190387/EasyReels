@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import { brand } from "./brand";
 import {
-  BeforeAfter, Bars, BgFire, Chapter, Chat, Counter, Cta, Enter, F, Funnel, Hook, List, LowerThird, OverHead, Outro, OUTRO_SECONDS, Progress, Quote, Terminal, C,
+  BeforeAfter, Bars, BgCode, BgFire, BgMarquee, BgPixels, CamRec, Chapter, Chat, Counter, Cta, Enter, F, Funnel, Hook, List, LowerThird, OverHead, Outro, OUTRO_SECONDS, Progress, PwaInstall, Quote, Split, Subs, Terminal, Timer, C, type SubsStyle,
 } from "./kit";
 
 /** Подложка «говорящая голова» для оверлеев: тёплая стена и силуэт — чтобы видеть, что графика не лезет на лицо. */
@@ -38,6 +38,25 @@ const ITEMS: { code: string; name: string; cam?: boolean; el: (d: number) => Rea
   { code: "FN-01", name: "Воронка", el: (d) => <Funnel dur={d} title="Автоворонка" steps={[{ label: "охват", value: "10 000" }, { label: "клик", value: "1 800" }, { label: "лид", value: "420" }, { label: "оплата", value: "96" }]} result="конверсия 0,96% → 2,4%" /> },
   { code: "BG-07", name: "Огонь — акцент-слайд", el: () => <AbsoluteFill><BgFire /><AbsoluteFill style={{ justifyContent: "center", padding: 110, fontFamily: F.display, fontWeight: F.displayWeight, fontSize: 130, lineHeight: 1, color: C.bg }}>Без одной строки кода</AbsoluteFill></AbsoluteFill> },
 ];
+
+const SAMPLE_WORDS = ["Нейросеть", "пишет", "весь", "код", "сама"].map((text, i) => ({ text, start: 1.0 + i * 0.3, end: 1.25 + i * 0.3 }));
+const SubsDemo: React.FC<{ style: SubsStyle }> = ({ style }) => <Subs words={SAMPLE_WORDS} style={style} />;
+ITEMS.push(
+  { code: "LT-03", name: "Гость — код-стиль", cam: true, el: (d) => <LowerThird dur={d} code name="Анна Петрова" role="CTO, SaaS" /> },
+  { code: "CTA-02", name: "Лайк", cam: true, el: (d) => <Cta dur={d} type="like" /> },
+  { code: "CTA-03", name: "Колокольчик", cam: true, el: (d) => <Cta dur={d} type="bell" /> },
+  { code: "CTA-08", name: "Закрытый клуб", cam: true, el: (d) => <Cta dur={d} type="club" note="Разборы, шаблоны ботов и созвоны" /> },
+  { code: "PR-02", name: "Таймер", el: (d) => <Timer dur={d} question="Угадай, сколько стоил бот" /> },
+  { code: "BA-01", name: "До / после — ползунок", el: (d) => <Split dur={d} before="заявки вручную" after="бот 24/7" /> },
+  { code: "PWA-01", name: "Установка PWA", el: (d) => <PwaInstall dur={d} /> },
+  { code: "BG-03", name: "Код-поток", el: () => <AbsoluteFill><BgCode /><AbsoluteFill style={{ justifyContent: "center", padding: 110, fontFamily: F.display, fontWeight: F.displayWeight, fontSize: 110, color: C.text }}>Деплой за вечер</AbsoluteFill></AbsoluteFill> },
+  { code: "BG-04", name: "Бегущий текст", el: () => <BgMarquee /> },
+  { code: "BG-05", name: "Пиксели", el: () => <AbsoluteFill><BgPixels /><AbsoluteFill style={{ justifyContent: "center", alignItems: "center", fontFamily: F.display, fontWeight: F.displayWeight, fontSize: 120, color: C.text }}>01</AbsoluteFill></AbsoluteFill> },
+  { code: "BG-08", name: "Камера REC", cam: true, el: () => <CamRec start={14} /> },
+  { code: "SUB-02", name: "Субтитры — обводка", cam: true, el: () => <SubsDemo style="outline" /> },
+  { code: "SUB-03", name: "Субтитры — глитч-слово", cam: true, el: () => <SubsDemo style="glitch" /> },
+  { code: "SUB-04", name: "Субтитры — код-плашка", cam: true, el: () => <SubsDemo style="code" /> },
+);
 
 export const KIT_SECONDS = ITEMS.length * S + OUTRO_SECONDS;
 

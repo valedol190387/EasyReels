@@ -134,3 +134,49 @@ export const Progress: React.FC<{ dur: number; n: number; of: number; label: str
     </AbsoluteFill>
   );
 };
+
+/** PR-02 Таймер-угадайка: кольцо обратного отсчёта 5…1 и вопрос — зритель досматривает до ответа. */
+export const Timer: React.FC<{ dur: number; from?: number; question: string }> = ({ dur, from = 5, question }) => {
+  const f = useCurrentFrame();
+  const total = Math.max(1, dur - 6);
+  const left = Math.max(1, Math.ceil(from * (1 - f / total)));
+  const p = Math.min(1, f / total);
+  const R = 150, L = 2 * Math.PI * R;
+  return (
+    <Full bg="plain">
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 50 }}>
+        <div style={{ position: "relative", width: 380, height: 380 }}>
+          <svg width={380} height={380} style={{ position: "absolute", inset: 0, transform: "rotate(-90deg)" }}>
+            <circle cx={190} cy={190} r={R} fill="none" stroke={C.line} strokeWidth={22} />
+            <circle cx={190} cy={190} r={R} fill="none" stroke={C.accent} strokeWidth={22} strokeLinecap="round" strokeDasharray={L} strokeDashoffset={L * p} />
+          </svg>
+          <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontFamily: F.display, fontWeight: F.displayWeight, fontSize: 200, color: C.text, transform: `scale(${1 + 0.08 * Math.max(0, 1 - ((f / total) * from) % 1 * 4)})` }}>{left}</div>
+        </div>
+        <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: fit(question, 72), lineHeight: 1.1, color: C.text, textAlign: "center", maxWidth: 860 }}>{question}</div>
+      </div>
+    </Full>
+  );
+};
+
+/**
+ * BA-01 До / после — разделённый экран с ползунком: сверху «после» (в огне), снизу «до» (серое),
+ * линия-ползунок ездит, открывая то одно, то другое. Для одной пары «было → стало».
+ */
+export const Split: React.FC<{ dur: number; before: string; after: string }> = ({ dur, before, after }) => {
+  const f = useCurrentFrame();
+  const y = interpolate(f, [0, dur * 0.35, dur * 0.6, dur], [72, 28, 28, 50], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE });
+  const half = (txt: string, hot: boolean) => (
+    <AbsoluteFill style={{ background: hot ? `radial-gradient(80% 60% at 50% 40%, ${C.accent}55, ${C.bg})` : `linear-gradient(${C.surface}, #2a2a2e)`, alignItems: "center", justifyContent: hot ? "flex-start" : "flex-end", padding: hot ? "300px 110px 0" : "0 110px 520px" }}>
+      <div style={{ alignSelf: "flex-start", fontFamily: F.mono, fontWeight: 700, fontSize: 30, letterSpacing: 3, background: hot ? C.accent : C.bg, color: hot ? textOn(C.accent) : C.muted, padding: "6px 14px", borderRadius: 8 }}>{hot ? "ПОСЛЕ" : "ДО"}</div>
+      <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: fit(txt, 80), lineHeight: 1.1, color: hot ? C.accent2 : C.muted, marginTop: 30, textAlign: "center" }}>{txt}</div>
+    </AbsoluteFill>
+  );
+  return (
+    <AbsoluteFill style={{ background: C.bg }}>
+      {half(before, false)}
+      <AbsoluteFill style={{ clipPath: `inset(0 0 ${100 - y}% 0)` }}>{half(after, true)}</AbsoluteFill>
+      <div style={{ position: "absolute", left: 0, right: 0, top: `${y}%`, height: 6, background: C.accent, transform: "translateY(-3px)" }} />
+      <div style={{ position: "absolute", left: "50%", top: `${y}%`, width: 60, height: 60, borderRadius: "50%", background: C.accent, transform: "translate(-50%, -50%)", boxShadow: `0 0 0 10px ${C.accent}33` }} />
+    </AbsoluteFill>
+  );
+};

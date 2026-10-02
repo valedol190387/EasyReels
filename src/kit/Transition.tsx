@@ -23,9 +23,27 @@ export const Enter: React.FC<{ children: React.ReactNode; from?: "up" | "zoom" |
  * Переход поверх стыка — редко, на смене темы. Sequence from = стык − 5 кадров, длина 10.
  * whip — размытая полоса акцента проходит наискось; slide — шторка цветом фона. Без моргания.
  */
-export const Transition: React.FC<{ type?: "whip" | "slide"; dur?: number }> = ({ type = "whip", dur = 10 }) => {
+export const Transition: React.FC<{ type?: "whip" | "slide" | "circle" | "bars"; dur?: number }> = ({ type = "whip", dur = 10 }) => {
   const f = useCurrentFrame();
   const x = interpolate(f, [0, dur], [-130, 130], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  if (type === "circle") {
+    // TR-04 круг: акцентный круг раскрывается из центра и тут же уходит кольцом
+    const r = interpolate(f, [0, dur / 2], [0, 120], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
+    const hole = interpolate(f, [dur / 2, dur], [0, 120], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
+    return <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 50%, transparent ${hole}%, ${C.accent} ${hole}%, ${C.accent} ${r}%, transparent ${r}%)` }} />;
+  }
+  if (type === "bars") {
+    // TR-02 пиксельные полосы: 8 полос заезжают ступенькой и уезжают дальше
+    return (
+      <AbsoluteFill>
+        {Array.from({ length: 8 }, (_, i) => {
+          const d = (i % 4) * 0.8;
+          const pos = interpolate(f, [d, d + dur * 0.8], [-105, 105], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          return <div key={i} style={{ position: "absolute", top: `${i * 12.5}%`, height: "12.6%", width: "100%", background: i % 2 ? C.bg : C.accent, transform: `translateX(${pos}%)` }} />;
+        })}
+      </AbsoluteFill>
+    );
+  }
   if (type === "slide") {
     return <AbsoluteFill style={{ background: C.bg, transform: `translateX(${x}%)` }} />;
   }

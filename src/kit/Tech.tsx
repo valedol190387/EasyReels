@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { brand } from "../brand";
 import { Bot } from "lucide-react";
 import { C, F, Z, OUT, fit, inOut, textOn } from "./tokens";
 import { BgGrid } from "./Backgrounds";
@@ -95,6 +96,34 @@ export const Funnel: React.FC<{ dur: number; title?: string; steps: { label: str
         );
       })}
       {result ? <div style={{ fontFamily: F.text, fontWeight: 800, fontSize: 44, color: C.accent2, marginTop: 30, opacity: interpolate(f, [24, 32], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>{result}</div> : null}
+    </AbsoluteFill>
+  );
+};
+
+/** PWA-01 Установка приложения без App Store: экран телефона, снизу выезжает лист «Установить», кнопка нажимается. */
+export const PwaInstall: React.FC<{ dur: number; title?: string; app?: string; url?: string; icon?: string }> = ({ dur, title = "Приложение без App Store", app = brand.name || "Моё приложение", url = "app.example.ru", icon = brand.avatar }) => {
+  const f = useCurrentFrame();
+  const sheet = interpolate(f, [8, 18], [100, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
+  const press = f > 26 && f < 31 ? 0.92 : 1;
+  const done = f >= 31;
+  return (
+    <AbsoluteFill style={{ background: C.bg, alignItems: "center", justifyContent: "center", opacity: inOut(f, dur, 3, 6) }}>
+      <div style={{ position: "relative", width: 640, height: 1240, borderRadius: 80, background: "#000", border: "14px solid #1c1c1f", boxShadow: "0 50px 120px rgba(0,0,0,.6)", overflow: "hidden" }}>
+        <div style={{ position: "absolute", left: "50%", top: 20, width: 190, height: 50, borderRadius: 30, background: "#000", transform: "translateX(-50%)", zIndex: 2 }} />
+        <AbsoluteFill style={{ background: `linear-gradient(${C.surface}, ${C.bg})`, padding: "130px 50px" }}>
+          <div style={{ fontFamily: F.display, fontWeight: F.displayWeight, fontSize: fit(title, 70, 520), lineHeight: 1.05, color: C.text }}>{title}</div>
+        </AbsoluteFill>
+        <div style={{ position: "absolute", left: 24, right: 24, bottom: 30, background: C.text, borderRadius: 40, padding: "34px 34px 40px", transform: `translateY(${sheet}%)` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+            {icon ? <Img src={staticFile(icon)} style={{ width: 110, height: 110, borderRadius: 26, objectFit: "cover" }} /> : <div style={{ width: 110, height: 110, borderRadius: 26, background: C.accent }} />}
+            <div>
+              <div style={{ fontFamily: F.text, fontWeight: 800, fontSize: 40, color: textOn(C.text) }}>{app}</div>
+              <div style={{ fontFamily: F.text, fontWeight: 600, fontSize: 28, color: textOn(C.text), opacity: 0.6 }}>{url}</div>
+            </div>
+          </div>
+          <div style={{ marginTop: 30, borderRadius: 999, background: done ? "#3DDC84" : C.accent, color: textOn(done ? "#3DDC84" : C.accent), textAlign: "center", fontFamily: F.text, fontWeight: 800, fontSize: 40, padding: "22px 0", transform: `scale(${press})` }}>{done ? "Установлено ✓" : "Установить"}</div>
+        </div>
+      </div>
     </AbsoluteFill>
   );
 };

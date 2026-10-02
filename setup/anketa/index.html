@@ -177,7 +177,7 @@ const SECTIONS = [
    {k:"cut.length", type:"one", label:"Длина ролика", opts:[D("meaning","По смыслу","режем воду, а не мысли"),D(30,"До 30 с"),D(60,"30–60 с"),D(90,"До 90 с")], def:"meaning"},
  ]},
  {id:"subs", t:"Субтитры", h:"Справа — как они будут бежать за речью.", q:[
-   {k:"subs.style", type:"one", label:"Стиль", opts:[D("karaoke","Караоке","фраза целиком, слово подсвечивается"),D("chunks","По 2–4 слова","без подсветки"),D("word","Одно слово","крупно, по центру"),D("none","Без субтитров")], def:"karaoke"},
+   {k:"subs.style", type:"one", label:"Стиль", opts:[D("karaoke","Караоке","фраза целиком, слово подсвечивается"),D("outline","Обводка","заглавные с контуром, ключевое слово в огне"),D("glitch","Глитч-слово","ключевое слово крупно, с глитчем"),D("code","Код-плашка","моноширинный, в тёмной плашке"),D("chunks","По 2–4 слова","без подсветки"),D("word","Одно слово","крупно, по центру"),D("none","Без субтитров")], def:"karaoke"},
    {k:"subs.caps", type:"one", label:"Регистр", opts:[D(false,"Обычный"),D(true,"ЗАГЛАВНЫЕ")], def:false},
    {k:"subs.terms", type:"tags", label:"Слова, которые расшифровка путает", sub:"Бренды, термины, имена. Enter — добавить. ИИ будет писать их правильно.", ph:"Claude, Remotion, Supabase…"},
  ]},
@@ -365,6 +365,19 @@ setInterval(()=>{
   if(p.subs.style==="chunks"){ const g=i<5?0:5; words=SAMPLE.slice(g,g+(g?3:5)); from=g; }
   if(p.subs.style==="karaoke"){ const g=i<5?0:5; words=SAMPLE.slice(g,g+(g?3:5)); from=g; }
   subs.style.fontSize=p.subs.style==="word"?"9cqw":"5.75cqw";
+  const st=p.subs.style;
+  subs.style.webkitTextStroke=st==="outline"?"0.9cqw #0B0B0C":""; subs.style.paintOrder="stroke fill";
+  subs.style.textTransform=(st==="outline"||st==="glitch"||p.subs.caps)?"uppercase":"none";
+  subs.style.fontFamily=st==="code"?"'JetBrains Mono',monospace":`'${(FONTS[p.style.fonts]||FONTS.kitchen).display}',sans-serif`;
+  subs.style.background=st==="code"?"rgba(11,11,12,.88)":""; subs.style.borderRadius=st==="code"?"1.6cqw":""; subs.style.padding=st==="code"?"1.4cqw 2.4cqw":"";
+  if(st==="outline"||st==="glitch"||st==="code"){
+    const g=i<5?0:5, ws=SAMPLE.slice(g,g+(g?3:5)); const keyI=ws.reduce((b,w,j)=>w.length>ws[b].length?j:b,0);
+    subs.innerHTML=(st==="code"?`<span style="color:${c.accent}">&gt; </span>`:"")+ws.map((w,j)=>{const w2=j===ws.length-1?w.replace(/[.,]$/,""):w;
+      const hot=st==="code"?(g+j===i):(j===keyI); const col=hot?(st==="code"?c.accent2:c.accent):"#fff";
+      const fx=st==="glitch"&&hot&&(tick%6<2)?`;text-shadow:.8cqw 0 ${c.accent},-.8cqw 0 #35D0FF;transform:translateX(.6cqw)`:"";
+      return `<span style="color:${col}${st==="glitch"&&hot?";font-size:1.25em":""}${fx}">${esc(w2)}</span>`;}).join(" ");
+    return;
+  }
   subs.innerHTML=words.map((w,j)=>{ const k=from+j; const w2=j===words.length-1?w.replace(/[.,]$/,""):w;
     if(p.subs.style!=="karaoke") return `<span style="color:${c.text==="#16161A"?"#fff":c.text}">${esc(w2)}</span>`;
     const on=k===i, said=k<i; return `<span style="color:${on?c.accent:"#fff"};opacity:${on||said?1:.45};transform:translateY(${on?"-0.4cqw":"0"})">${esc(w2)}</span>`; }).join(" ");

@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { ArrowUp, BarChart3, Bookmark, Bot, Check, Code2, MessageSquare, MousePointer2, Send, Sparkles, Zap } from "lucide-react";
+import { ArrowUp, BarChart3, Bell, Bookmark, Bot, Check, Code2, Heart, Lock, MessageSquare, MousePointer2, Send, Sparkles, Zap } from "lucide-react";
 import { brand } from "../brand";
 import { C, F, S, Z, V, fit, glitch, inOut, pop, textOn, OUT } from "./tokens";
 
@@ -36,11 +36,28 @@ export const Hook: React.FC<{ dur: number; eyebrow?: string; line1: string; fire
 };
 
 /** LT-01 / LT-02 Плашка «кто говорит». Слева, над субтитрами. avatar=true — пилюля с аватаром. */
-export const LowerThird: React.FC<{ dur: number; name?: string; role?: string; avatar?: boolean }> = ({ dur, name = brand.name, role = brand.niche, avatar }) => {
+export const LowerThird: React.FC<{ dur: number; name?: string; role?: string; avatar?: boolean; code?: boolean }> = ({ dur, name = brand.name, role = brand.niche, avatar, code }) => {
   const f = useCurrentFrame();
   const bar = interpolate(f, [0, 8, dur - 8, dur], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
   const txt = interpolate(f, [4, 12, dur - 10, dur - 3], [120, 0, 0, 120], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
   const bottom = Z.subsBottom + 230;
+  if (code) {
+    // LT-03 Гость — код-стиль: guest.name = "…" печатается
+    const l1 = `guest.name = "${name}"`, l2 = `guest.role = "${role}"`;
+    const n1 = Math.floor(interpolate(f, [3, 3 + l1.length * 0.6], [0, l1.length], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+    const n2 = Math.floor(interpolate(f, [6 + l1.length * 0.6, 6 + (l1.length + l2.length) * 0.6], [0, l2.length], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+    const hl = (s: string) => s.replace(/(".*?"?)$/, "\u0000$1").split("\u0000");
+    const line = (s: string) => { const [a, b] = hl(s); return <div><span style={{ color: C.accent }}>{a.slice(0, 5)}</span><span style={{ color: C.text }}>{a.slice(5)}</span><span style={{ color: C.accent2 }}>{b}</span></div>; };
+    return (
+      <AbsoluteFill style={{ justifyContent: "flex-end", paddingLeft: Z.side, paddingBottom: bottom }}>
+        <div style={{ alignSelf: "flex-start", background: "rgba(11,11,12,.9)", border: `2px solid ${C.line}`, borderRadius: 14, padding: "18px 26px", fontFamily: F.mono, fontWeight: 600, fontSize: 34, lineHeight: 1.45, opacity: bar }}>
+          {line(l1.slice(0, n1))}
+          {line(l2.slice(0, n2))}
+          {Math.floor(f / 8) % 2 === 0 ? <span style={{ display: "inline-block", width: 16, height: 34, background: C.accent2, verticalAlign: "middle" }} /> : null}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   if (avatar && brand.avatar) {
     return (
       <AbsoluteFill style={{ justifyContent: "flex-end", paddingLeft: Z.side, paddingBottom: bottom }}>
@@ -113,7 +130,7 @@ export const Chapter: React.FC<{ dur: number; n: number; of: number; title: stri
 };
 
 /** Призывы: subscribe (CTA-01), save (CTA-04), share (CTA-05), keyword (CTA-06), link (CTA-07). Компактно, сбоку/сверху. */
-export const Cta: React.FC<{ dur: number; type: "subscribe" | "save" | "share" | "keyword" | "link"; title?: string; note?: string; keyword?: string }> = ({ dur, type, title, note, keyword }) => {
+export const Cta: React.FC<{ dur: number; type: "subscribe" | "save" | "share" | "keyword" | "link" | "like" | "bell" | "club"; title?: string; note?: string; keyword?: string }> = ({ dur, type, title, note, keyword }) => {
   const f = useCurrentFrame();
   const a = inOut(f, dur, 7, 6);
   const card: React.CSSProperties = { display: "flex", alignItems: "center", gap: 26, background: C.surface, borderRadius: 26, padding: "24px 34px 24px 24px", boxShadow: "0 20px 60px rgba(0,0,0,.5)", opacity: a, transform: `translateY(${(1 - a) * 30}px) scale(${0.9 + 0.1 * a})` };
@@ -138,6 +155,48 @@ export const Cta: React.FC<{ dur: number; type: "subscribe" | "save" | "share" |
           <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 48, padding: "16px 40px", borderRadius: 18, background: clicked ? C.surface : C.accent, color: clicked ? C.text : textOn(C.accent), display: "flex", alignItems: "center", gap: 14 }}>
             {title ?? (clicked ? "Вы в теме" : "Подписаться")} {clicked ? <Check size={44} /> : null}
           </div>
+        </div>
+      </TopZone>
+    );
+  }
+  if (type === "like" || type === "bell") {
+    // CTA-02 лайк: сердце наполняется, «+1» взлетает, волна; CTA-03 колокольчик: звенит, бейдж «1»
+    const isLike = type === "like";
+    const fill = f > 8;
+    const ring = interpolate(f, [8, 22], [0.5, 1.9], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    const rot = isLike ? 0 : Math.sin(f / 1.6) * 18 * Math.max(0, 1 - Math.max(0, f - 6) / 14);
+    return (
+      <TopZone align="center" scrim={a * 0.6}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, marginTop: 30, opacity: a }}>
+          <div style={{ position: "relative", width: 200, height: 200, display: "grid", placeItems: "center" }}>
+            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `5px solid ${C.accent}`, transform: `scale(${ring})`, opacity: f > 8 ? Math.max(0, 1 - (ring - 0.5) / 1.4) : 0 }} />
+            <div style={{ width: 200, height: 200, borderRadius: "50%", background: isLike ? C.surface : C.accent, display: "grid", placeItems: "center", transform: `scale(${pop(f, 0) * (isLike && f > 8 && f < 14 ? 1.25 : 1)}) rotate(${rot}deg)` }}>
+              {isLike ? <Heart size={96} color={fill ? C.accent : C.text} fill={fill ? C.accent : "none"} strokeWidth={2.4} /> : <Bell size={96} color={textOn(C.accent)} strokeWidth={2.4} />}
+            </div>
+            {isLike ? (
+              <div style={{ position: "absolute", top: -10, right: -40, fontFamily: F.display, fontWeight: 800, fontSize: 56, color: C.accent, opacity: interpolate(f, [9, 12, 22, 28], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }), transform: `translateY(${interpolate(f, [9, 28], [0, -80], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}px)` }}>+1</div>
+            ) : (
+              <div style={{ position: "absolute", top: 8, right: 8, width: 64, height: 64, borderRadius: "50%", background: C.accent2, color: textOn(C.accent2), display: "grid", placeItems: "center", fontFamily: F.display, fontWeight: 800, fontSize: 34, transform: `scale(${pop(f, 6)})` }}>1</div>
+            )}
+          </div>
+          <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 60, color: V, textAlign: "center", lineHeight: 1.05, textShadow: "0 4px 18px rgba(0,0,0,.6)" }}>{title ?? (isLike ? "Лайк" : "Включи уведомления")}</div>
+        </div>
+      </TopZone>
+    );
+  }
+  if (type === "club") {
+    // CTA-08 Закрытый клуб: светлая карточка с замком + штамп «ДОСТУП ОТКРЫТ»
+    const stamp = interpolate(f, [14, 20], [2.4, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
+    return (
+      <TopZone align="center">
+        <div style={{ position: "relative", width: 720, background: C.text, borderRadius: 30, padding: "36px 40px", boxShadow: "0 30px 80px rgba(0,0,0,.5)", opacity: a, transform: `translateY(${(1 - a) * 40}px) rotate(-1.5deg)` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontFamily: F.mono, fontWeight: 700, fontSize: 26, letterSpacing: 3, color: textOn(C.text) }}>ЗАКРЫТЫЙ КЛУБ</span>
+            <Lock size={44} color={C.accent} strokeWidth={2.6} />
+          </div>
+          <div style={{ fontFamily: F.display, fontWeight: F.displayWeight, fontSize: fit(title ?? "Вступай в клуб", 84, 640), lineHeight: 1.02, color: textOn(C.text), marginTop: 18 }}>{title ?? "Вступай в клуб"}</div>
+          {note ? <div style={{ fontFamily: F.text, fontWeight: 600, fontSize: 32, color: textOn(C.text), opacity: 0.7, marginTop: 14 }}>{note}</div> : null}
+          <div style={{ position: "absolute", right: -20, bottom: -36, fontFamily: F.display, fontWeight: 800, fontSize: 38, color: textOn(C.accent), background: C.accent, padding: "8px 18px", borderRadius: 8, transform: `rotate(-8deg) scale(${f >= 14 ? stamp : 0})` }}>ДОСТУП ОТКРЫТ</div>
         </div>
       </TopZone>
     );
